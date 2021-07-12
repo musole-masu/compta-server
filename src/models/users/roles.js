@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 
-const sequelize = require('../../utils/connection');
+const sequelize = require('../../../utils/connection')
 
 const Roles = sequelize.define('roles', {
     roleTitle: {type: DataTypes.STRING, allowNull: false},

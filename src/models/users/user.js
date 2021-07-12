@@ -6,7 +6,7 @@
 
  const Sequelize = require('sequelize');
 
- const sequelize = require('../../utils/connection');
+ const sequelize = require('../../../utils/connection');
 
  const User = sequelize.define('users', {
      id: {

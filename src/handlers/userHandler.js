@@ -5,9 +5,9 @@ const sequelize = require('../../utils/connection');
  * Import tables models to make queries
  * 
  */
-const Roles = require('../models/roles');
-const User = require('../models/user');
-const UserRoles = require('../models/userRole');
+const Roles = require('../models/users/roles');
+const User = require('../models/users/user');
+const UserRoles = require('../models/users/userRole');
 
 /**
  * 
@@ -43,7 +43,7 @@ exports.postRolesHandler = (req, res, next) => {
 
 exports.getRolesHandler = (req, res, next) => {
     Roles.findAll().then(result => {
-        res.status(200).send(JSON.stringify(result))
+        res.status(200).send(result)
     })
     .catch(err => {
         res.status(500).send(JSON.stringify(err.original))
@@ -127,14 +127,20 @@ exports.signInUserHandler = (req, res, next) => {
         bcrypt.compare(userPlaintextPassword, encryptedPassword)
         .then(result => {
             if (result) {
-                const message = {
-                    success: result,
-                    message: "User successfully signed in",
-                    user: user
-                }
-                return res.status(200).send(message);
+                user.getRoles()
+                .then(role => {
+                    const message = {
+                        success: result,
+                        message: "User successfully signed in",
+                        user: user,
+                        role: role[0]
+                    }
+                    res.status(200).send(message);
+                })
+            } else {
+                return res.status(401).send({sucess: result, message: "User unauthenticated"});
             }
-            return res.status(401).send({sucess: result, message: "User unauthenticated"});
+            
         })
     })
     .catch(err => {
