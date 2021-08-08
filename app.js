@@ -16,6 +16,8 @@ const UserRoles = require('./src/models/users/userRole');
 const Class = require('./src/models/accounting/class');
 const ThreeDigitAccount = require('./src/models/accounting/account').ThreeDigitAccount;
 const FourDigitAccount = require('./src/models/accounting/account').FourDigitAccount;
+const TextAndDigitAccount = require('./src/models/accounting/account').TextAndDigitAccount;
+
 
 
 
@@ -43,6 +45,8 @@ Class.hasMany(ThreeDigitAccount);
 FourDigitAccount.belongsTo(ThreeDigitAccount);
 ThreeDigitAccount.hasMany(FourDigitAccount);
 
+TextAndDigitAccount.belongsTo(FourDigitAccount);
+FourDigitAccount.hasMany(TextAndDigitAccount)
 
 
 
@@ -52,6 +56,8 @@ sequelize
     console.log(`
     APP CONNECTED TO DATABASE -> ${result.config.database} \n
     APP RUNNING ON -> ${result.config.host} \n`);
+
+    
     app.listen(port, () => {
         console.log('LISTENING ON ' + port);
     })
