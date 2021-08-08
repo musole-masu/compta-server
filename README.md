@@ -37,9 +37,11 @@ git clone git@github.com:musole-masu/compta-server.git
 ```
 
 <li>Install NPM packages</li>
+
 ```
 npm install
 ```
+
 </ul>
 
 ## EXECUTING PROGRAM
