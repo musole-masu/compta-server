@@ -1,66 +1,48 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const sequelize = require('./utils/connection');
-const userRoutes = require('./src/routes/userRoutes');
-const accountingRoutes = require('./src/routes/accountingRoutes');
-const app = express();
+import express, { Router } from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import adminRoute from "./src/routes/adminRoute";
+export class App {
+  static app;
+  constructor() {
+    this.app = express();
+    this.initialMiddlewares();
+    this.initializeRoutes();
+    this.initailizeDefaultRoute();
+  }
+  initialMiddlewares() {
+    this.app.use(bodyParser.json());
+    this.app.use(cors());
+  }
+  initializeRoutes() {
+    this.app.use("/api/v1/", adminRoute);
+  }
+  initailizeDefaultRoute() {
+    this.app.get("/", (req, res) => {
+      return res.status(200).json({
+        statusCode: "200",
+        message: "Bienvenue sur la Compta",
+      });
+    });
 
-/**
- * 
- * Import of Tables Model from models folder
- * 
- */
-const User = require('./src/models/users/user');
-const Roles = require('./src/models/users/roles');
-const UserRoles = require('./src/models/users/userRole');
-const Class = require('./src/models/accounting/class');
-const ThreeDigitAccount = require('./src/models/accounting/account').ThreeDigitAccount;
-const FourDigitAccount = require('./src/models/accounting/account').FourDigitAccount;
-const TextAndDigitAccount = require('./src/models/accounting/account').TextAndDigitAccount;
+    this.app.all("/", (req, res) => {
+      return res.status(400).json({
+        statusCode: "400",
+        message: "Invalid route",
+      });
+    });
 
-
-
-
-/**
- * PORT NUMBER ON LOCALHOST
-*/
-const port = 4000;
-
-app.use(bodyParser.json());
-
-app.use('/compta',userRoutes);
-app.use('/compta', accountingRoutes);
-
-/**
- * 
- * Database tables relationships 
- * 
- */
-User.belongsToMany(Roles, { through: UserRoles})
-Roles.belongsToMany(User, { through: UserRoles})
-
-ThreeDigitAccount.belongsTo(Class);
-Class.hasMany(ThreeDigitAccount);
-
-FourDigitAccount.belongsTo(ThreeDigitAccount);
-ThreeDigitAccount.hasMany(FourDigitAccount);
-
-TextAndDigitAccount.belongsTo(FourDigitAccount);
-FourDigitAccount.hasMany(TextAndDigitAccount)
-
-
-
-sequelize
-.sync()
-.then(result => {
-    console.log(`
-    APP CONNECTED TO DATABASE -> ${result.config.database} \n
-    APP RUNNING ON -> ${result.config.host} \n`);
-
-    
-    app.listen(port, () => {
-        console.log('LISTENING ON ' + port);
-    })
-})
-.catch(err => console.log(err));
-
+    this.app.use("*", (req, res) => {
+      return res.status(403).json({
+        statusCode: "403",
+        message: "Invalid route",
+      });
+    });
+  }
+  listen() {
+    const port = process.env.PORT || 4000;
+    this.app.listen(port, () => {
+      console.log(`App running on port ${port}`);
+    });
+  }
+}

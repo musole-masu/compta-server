@@ -1,15 +1,14 @@
-import Sequelize from "sequelize";
-import dotenv from "dotenv";
+import sequelize from "../config/dbConnection.js";
+import { createAssociations } from "./models/index.js";
 
-dotenv.config();
-
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
-  {
-    dialect: "mysql",
-    host: "localhost",
+export const initializeDB = async () => {
+  createAssociations();
+  try {
+    const response = await sequelize.sync({ alter: true });
+    console.log(
+      `LA COMPTA SERVER SUCCESSFULLY CONNECTED TO ${response.config.database} DATABASE ON ${response.config.host}`
+    );
+  } catch (error) {
+    console.log(error);
   }
-);
-module.exports = sequelize;
+};

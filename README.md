@@ -29,7 +29,6 @@ npm install
 ## INSTALLATION
 
 <ul>
-<li>Get a free api key : <a href="">musole-masu/project-keys</a></li>
 <li>Clone the repos</li>
 
 ```
